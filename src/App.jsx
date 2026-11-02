@@ -1,122 +1,94 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { RotateCcw, Trash2 } from "lucide-react";
+import Header from "./components/Header";
+import RingkasanStatistik from "./components/RingkasanStatistik";
+import FormTambahTugas from "./components/FormTambahTugas";
+import DaftarTugas from "./components/DaftarTugas";
+import { initialTasks } from "./data/initialTasks";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [daftarTugas, setDaftarTugas] = useState(initialTasks);
+
+  const totalTugas = daftarTugas.length;
+  const tugasSelesai = daftarTugas.filter((t) => t.status === "Selesai").length;
+  const tugasBelumSelesai = totalTugas - tugasSelesai;
+
+  const handleTambahTugas = (tugasBaru) => {
+    const tugasDenganId = {
+      ...tugasBaru,
+      id: Date.now(),
+    };
+    setDaftarTugas((prevTugas) => [tugasDenganId, ...prevTugas]);
+  };
+
+  const handleToggleStatus = (id) => {
+    setDaftarTugas((prevTugas) =>
+      prevTugas.map((tugas) =>
+        tugas.id === id
+          ? {
+              ...tugas,
+              status: tugas.status === "Selesai" ? "Belum Selesai" : "Selesai",
+            }
+          : tugas
+      )
+    );
+  };
+
+  const handleHapusTugas = (id) => {
+    setDaftarTugas((prevTugas) => prevTugas.filter((tugas) => tugas.id !== id));
+  };
+
+  const handleKosongkanDaftar = () => {
+    setDaftarTugas([]);
+  };
+
+  const handleResetDataAwal = () => {
+    setDaftarTugas(initialTasks);
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-slate-50/70 flex flex-col font-sans text-slate-800">
+      <Header
+        judul="Manajemen Tugas Kuliah"
+        deskripsi="Pusat kendali dan pencatatan tugas akademik semester 7."
+      />
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8 sm:px-6 lg:px-8 pb-16">
+        <div className="flex justify-end gap-2 mb-6">
+          <button
+            type="button"
+            onClick={handleResetDataAwal}
+            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white text-slate-700 hover:bg-slate-100 border border-slate-200 shadow-xs transition-colors cursor-pointer"
+            title="Muat kembali 3 tugas contoh realistis"
+          >
+            <RotateCcw className="w-3.5 h-3.5 text-slate-500" strokeWidth={2} />
+            <span>Muat Data Contoh</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleKosongkanDaftar}
+            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-white text-slate-600 hover:bg-red-50 hover:text-red-700 hover:border-red-200 border border-slate-200 shadow-xs transition-colors cursor-pointer"
+            title="Hapus semua tugas untuk menguji tampilan daftar kosong"
+          >
+            <Trash2 className="w-3.5 h-3.5 text-slate-400" strokeWidth={2} />
+            <span>Kosongkan Daftar</span>
+          </button>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        <RingkasanStatistik
+          totalTugas={totalTugas}
+          tugasSelesai={tugasSelesai}
+          tugasBelumSelesai={tugasBelumSelesai}
+        />
+
+        <FormTambahTugas onTambahTugas={handleTambahTugas} />
+
+        <DaftarTugas
+          daftarTugas={daftarTugas}
+          onToggleStatus={handleToggleStatus}
+          onHapus={handleHapusTugas}
+        />
+      </main>
+    </div>
+  );
 }
-
-export default App
